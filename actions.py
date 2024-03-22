@@ -7,8 +7,7 @@ class Actions():
     def __init__(self):
         #Variables
         pass
-        
-
+    
     def LoadButton(self):
         ListOfTransaction = []
         try:
@@ -78,5 +77,51 @@ class Actions():
         
         except Exception as e:
             print(e)
+
+
+    def LoadPOSDM(self, column) -> list:
+        file = ct.filedialog.askopenfilename(initialdir='c:\\', title="Find POSDM report")
+        transactions = []
+        try:
+            if file.lower().endswith('.xlsx'):
+                df = pd.read_excel(file)
+            elif file.lower().endswith('.csv'):
+                df = pd.read_csv(file, delimiter=";")
+            else:
+                raise ValueError("Unsupported file format. Please provide a .xlsx or .csv file.")
+            if column not in df.columns:
+                raise ValueError("Specified column not found in the file.")
+            transactions = df[column].tolist()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        return transactions
+    
+    def ComparisionOfTransaction(self, reportOne, reportTwo):
+        count_a = {}
+        count_b = {}
+
+        for amount in reportOne:
+            count_a[amount] = count_a.get(amount, 0) +1
+
+        for amount in reportTwo:
+            count_b[amount] = count_b.get(amount, 0) +1
+
+        missing_in_b = [amount for amount in count_a if amount not in count_b or count_a[amount] > count_b[amount]]
+        missing_in_a = [amount for amount in count_b if amount not in count_a or count_b[amount] > count_a[amount]]
+
+        return missing_in_a, missing_in_b, len(reportOne), len(reportTwo)
+
+
+        
+
+
+
+
+
+    
+
+
+
+
 
 
