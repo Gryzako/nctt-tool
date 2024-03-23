@@ -16,7 +16,7 @@ class App(customtkinter.CTk):
 
         #Cofigure window
         self.geometry('400x300')
-        #self.resizable(False, False)
+        self.resizable(False, False)
         self.title('NCTT tool')
 
         #Tabs config
@@ -39,15 +39,15 @@ class App(customtkinter.CTk):
         self.LabelStatusResult = customtkinter.CTkLabel(self.tabView.tab("NIPC_SAP"), text='  File not loaded', font=('Fixedsys', 12, 'bold'))
         self.LabelStatusResult.grid(row=0, column=1, sticky="nsew")
 
-        self.ButtonLoad = customtkinter.CTkButton(self.tabView.tab("NIPC_SAP"), text="Load file", command=self.LoadFileAction)
+        self.ButtonLoad = customtkinter.CTkButton(self.tabView.tab("NIPC_SAP"), text="Load", command=self.LoadFileAction)
         self.ButtonLoad.grid(row=1, column=0, padx = 5, sticky="nsew")
 
-        self.buttonSaveResults = customtkinter.CTkButton(self.tabView.tab("NIPC_SAP"), text='Save as TXT', state=customtkinter.DISABLED, command=self.SaveButtonAction)
+        self.buttonSaveResults = customtkinter.CTkButton(self.tabView.tab("NIPC_SAP"), text='Save', state=customtkinter.DISABLED, command=self.SaveButtonAction)
         self.buttonSaveResults.grid(row=1, column=1, padx = 5, sticky="nsew")
 
 
         #Widgets Transaction version
-        self.TversionLabel = customtkinter.CTkLabel(self.tabView.tab("TVersion"), text='This program is using connected device report \n and checking whether site has the same terminal version \n on all devices')
+        self.TversionLabel = customtkinter.CTkLabel(self.tabView.tab("TVersion"), text='Load connected device report to see \nwhether sites have same terminal version', font=('Fixedsys', 12, 'bold'))
         self.TversionLabel.grid(row=0, column=0, sticky="nsew")
 
         self.LoadButton = customtkinter.CTkButton(self.tabView.tab("TVersion"), text='Load', command=self.LoadTVersion, width=380)
@@ -59,12 +59,12 @@ class App(customtkinter.CTk):
         #Widgets POSDMvsADB
         self.LoadPOSDMbutton = customtkinter.CTkButton(self.tabView.tab("POSDMvsADB"), text='Load POSDM', command=self.LoadPOSDMbuttonAction)
         self.LoadPOSDMbutton.grid(row=0, column=0, padx = 5, pady = 5)
-        self.LoadPOSDMlabel = customtkinter.CTkLabel(self.tabView.tab("POSDMvsADB"), text="not loaded")
+        self.LoadPOSDMlabel = customtkinter.CTkLabel(self.tabView.tab("POSDMvsADB"), text="not loaded", font=('Fixedsys', 12, 'bold'))
         self.LoadPOSDMlabel.grid(row=0, column=1)
 
         self.LoadADBButton = customtkinter.CTkButton(self.tabView.tab("POSDMvsADB"), text='Load ADB', command=self.LoadADBButtonAction)
         self.LoadADBButton.grid(row=1, column=0, padx = 5, pady = 5)
-        self.LoadADBlabel = customtkinter.CTkLabel(self.tabView.tab("POSDMvsADB"), text="not loaded")
+        self.LoadADBlabel = customtkinter.CTkLabel(self.tabView.tab("POSDMvsADB"), text="not loaded", font=('Fixedsys', 12, 'bold'))
         self.LoadADBlabel.grid(row=1, column=1)
 
         self.ActionButton = customtkinter.CTkButton(self.tabView.tab("POSDMvsADB"), text="Action", command=self.POSDMvsADBaction)
@@ -98,8 +98,8 @@ class App(customtkinter.CTk):
 
     def POSDMvsADBaction(self):
         diff1, diff2, lenPOSDM, lenADB = Actions.ComparisionOfTransaction(self, self.POSDMtransaction, self.ADBtransactions)
-        self.TextboxPOSDMvsADB.insert('0.0', f"Raport POSDM zawiera {lenPOSDM} transakcje. Zawiera on następujące transakcje: {diff2} których nie ma raport ADB \n" )
-        self.TextboxPOSDMvsADB.insert('0.0', f"Raport ADB zawiera {lenADB} transakcje. Zawiera on następujące transakcje: {diff1} których nie ma raport POSDM \n")
+        self.TextboxPOSDMvsADB.insert('0.0', f"Report POSDM contains {lenPOSDM} transactions. It has the following transactions: {diff2} which are missing in ADB \n" )
+        self.TextboxPOSDMvsADB.insert('0.0', f"Report ADB contains {lenADB} transactions. It has the following transactions: {diff1} which are missing in POSDM \n")
 
 if __name__ == "__main__":
     app = App()
