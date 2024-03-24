@@ -1,4 +1,4 @@
-import customtkinter
+import customtkinter 
 from actions import Actions 
 
 customtkinter.set_appearance_mode('Dark')
