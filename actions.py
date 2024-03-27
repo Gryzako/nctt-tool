@@ -1,6 +1,6 @@
-import customtkinter as ct
-import pandas as pd
-import numpy as np
+from customtkinter import filedialog
+from pandas import DataFrame, read_excel, read_csv, to_numeric
+from numpy import nan
 
 
 class Actions():
@@ -11,7 +11,7 @@ class Actions():
     def LoadButton(self):
         ListOfTransaction = []
         try:
-            filepath = ct.filedialog.askopenfilename(initialdir='c:\\', title="find NIPC_SAP file")
+            filepath = filedialog.askopenfilename(initialdir='c:\\', title="find NIPC_SAP file")
             with open(filepath) as file:
                 for line in file:
                     if line.startswith('3000'):
@@ -35,7 +35,7 @@ class Actions():
     def SaveButton(self, listoftrx, columns):
         try:
             FilesType = [("Excel files", "*.xlsx"), ("Text files", "*.txt"), ("All files", "*.*")]
-            file = ct.filedialog.asksaveasfile(mode='w', defaultextension=".xlsx", filetypes=FilesType)
+            file = filedialog.asksaveasfile(mode='w', defaultextension=".xlsx", filetypes=FilesType)
             if file is None:
                 return
             filename = file.name
@@ -46,7 +46,9 @@ class Actions():
                 for i in listoftrx[0]:
                     array = i.split(',')
                     new_list.append(array)
-                df = pd.DataFrame(new_list, columns=columns)
+                df = DataFrame(new_list, columns=columns)
+                comma = lambda val: '{:0.2f}'.format(float(val.lstrip('0')) / 100)
+                df['Amount, '] = df['Amount, '].apply(comma)
                 df.to_excel(filename, index=False)
             elif filename.endswith('.txt'):
                 with open(filename, 'w') as f:
@@ -61,10 +63,10 @@ class Actions():
     #Tversion
             
     def LoadTversionFile(self):
-        file = ct.filedialog.askopenfilename(initialdir='c:\\', title="find terminal connected report")
+        file = filedialog.askopenfilename(initialdir='c:\\', title="find terminal connected report")
         try:
-            df = pd.read_excel(file)
-            df['software_version'] = df['software_version'].replace('', np.nan)
+            df = read_excel(file)
+            df['software_version'] = df['software_version'].replace('', nan)
             same_version = []
             different_version = []
             for site, site_data in df.groupby('site_id'):
@@ -80,13 +82,13 @@ class Actions():
 
 
     def LoadPOSDM(self, column) -> list:
-        file = ct.filedialog.askopenfilename(initialdir='c:\\', title="Find POSDM report")
+        file = filedialog.askopenfilename(initialdir='c:\\', title="Find POSDM report")
         transactions = []
         try:
             if file.lower().endswith('.xlsx'):
-                df = pd.read_excel(file)
+                df = read_excel(file)
             elif file.lower().endswith('.csv'):
-                df = pd.read_csv(file, delimiter=";")
+                df = read_csv(file, delimiter=";")
             else:
                 raise ValueError("Unsupported file format. Please provide a .xlsx or .csv file.")
             if column not in df.columns:
@@ -110,12 +112,6 @@ class Actions():
         missing_in_a = [amount for amount in count_b if amount not in count_a or count_b[amount] > count_a[amount]]
 
         return missing_in_a, missing_in_b, len(reportOne), len(reportTwo)
-
-
-        
-
-
-
 
 
     
