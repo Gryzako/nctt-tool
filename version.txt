@@ -1,0 +1,14 @@
+--- Version 1.0 ---
+This version include following functions:
+
+- added help and version windows
+-adjust size of window nad padx
+
+
+NIPC_SAP:
+- added reading entire folder
+- corrected amout value. Currently it is as numberic files which allow
+  to implement excel function immedaitelly (e.g: SUM())
+
+POSDMvsADB:
+- Comparision works on rule of elimination.

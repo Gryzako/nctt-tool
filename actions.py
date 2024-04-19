@@ -1,7 +1,8 @@
 from customtkinter import filedialog
-from pandas import DataFrame, read_excel, read_csv, to_numeric
+from pandas import DataFrame, read_excel, read_csv
 from numpy import nan
-
+import os
+import time
 
 class Actions():
     def __init__(self):
@@ -9,28 +10,25 @@ class Actions():
         pass
     
     def LoadButton(self):
-        ListOfTransaction = []
         try:
             filepath = filedialog.askopenfilename(initialdir='c:\\', title="find NIPC_SAP file")
-            with open(filepath) as file:
-                for line in file:
-                    if line.startswith('3000'):
-                        AmountOfTransaction = line[145:151]
-                        DeviceNumber = line[55:63]
-                        StanNumber = line[65:69]
-                        Hour = line[69:71]
-                        Minutes = line[71:73]
-                        Seconds = line[73:75]
-                        Year = line[75:79]
-                        Month = line[79:81]
-                        Day = line[81:83]
-                        AuthCode = line[119:125]
-                        BatchNo = line[19:22]
-                        ListOfTransaction.append(f'{Year}.{Month}.{Day} {Hour}:{Minutes}:{Seconds}, {BatchNo}, {DeviceNumber}, {StanNumber}, {AmountOfTransaction}, {AuthCode}')
-            return ListOfTransaction
+            action_instance = Actions()
+            return action_instance.sortList(filepath)
         except Exception as e:
             print(e)
-
+    
+    def OpenFolder(self, columns):
+        folder_path = filedialog.askdirectory()
+        files = os.listdir(folder_path)
+        for file in files:
+            try:
+                action_instance = Actions()
+                listOfTrx = []
+                listOfTrx.append(action_instance.sortList(os.path.join(folder_path, file)))
+                action_instance.saveAsExcel(listOfTrx, columns, f'{file}.xlsx')
+            except Exception as e:
+                print(e)
+            time.sleep(1)
 
     def SaveButton(self, listoftrx, columns):
         try:
@@ -41,25 +39,52 @@ class Actions():
             filename = file.name
             file.close()
 
+            action_istance = Actions()
+
             if filename.endswith('.xlsx'):
-                new_list = []
-                for i in listoftrx[0]:
-                    array = i.split(',')
-                    new_list.append(array)
-                df = DataFrame(new_list, columns=columns)
-                comma = lambda val: '{:0.2f}'.format(float(val.lstrip('0')) / 100)
-                df['Amount, '] = df['Amount, '].apply(comma)
-                df.to_excel(filename, index=False)
+                action_istance.saveAsExcel(listoftrx, columns, filename)
             elif filename.endswith('.txt'):
-                with open(filename, 'w') as f:
-                    f.write(f'{"".join(columns)}\n')
-                    for i in listoftrx:
-                        f.write('\n'.join(i))
+                action_istance.saveAsTxt(listoftrx, columns, filename)
             else:
                 print("Unsupported file format. Please choose either .xlsx or .txt.")
         except Exception as e:
             print(e)
 
+    def saveAsExcel(self, list, columns, name):
+        new_list = []
+        for i in list[0]:
+            array = i.split(',')
+            new_list.append(array)
+        df = DataFrame(new_list, columns=columns)
+        comma = lambda val: '{:0.2f}'.format(float(val.lstrip('0')) / 100)
+        df['Amount, '] = df['Amount, '].apply(comma)
+        df.to_excel(name, index=False)
+
+    def saveAsTxt(self, list, column, name):
+        with open(name, 'w') as f:
+            f.write(f'{"".join(column)}\n')
+            for i in list:
+                f.write('\n'.join(i))
+
+    def sortList(self, file):
+        sortedList = []
+        with open(file) as f:
+            for line in f:
+                if line.startswith('3000'):
+                    AmountOfTransaction = line[145:151]
+                    DeviceNumber = line[55:63]
+                    StanNumber = line[65:69]
+                    Hour = line[69:71]
+                    Minutes = line[71:73]
+                    Seconds = line[73:75]
+                    Year = line[75:79]
+                    Month = line[79:81]
+                    Day = line[81:83]
+                    AuthCode = line[119:125]
+                    BatchNo = line[19:22]
+                    sortedList.append(f'{Year}.{Month}.{Day} {Hour}:{Minutes}:{Seconds}, {BatchNo}, {DeviceNumber}, {StanNumber}, {AmountOfTransaction}, {AuthCode}')
+        return sortedList
+    
     #Tversion
             
     def LoadTversionFile(self):
@@ -76,7 +101,6 @@ class Actions():
                 else:
                     different_version.append(site)
             return different_version
-        
         except Exception as e:
             print(e)
 

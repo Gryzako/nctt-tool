@@ -1,0 +1,21 @@
+\bNIPC_SAP - it allow you to convert Aevi settlement export files to "readable" version. 
+We've got three buttons there:
+
+"Load file" - use it when you want to convert only one file. By using this option you
+ have a possibility to save results as xlsx or txt
+"Load folder" - when you have more than one file which needs to be converted use this
+option. Put all NIPC_SAP to one folder and make sure that folder does not contain 
+different files. Select this folder and program will convert automatically all of them.
+Files will be saved on the folder where your exe file is located.
+"Save" - use this button when you load one file "Load file" this option will give you
+possibility to select which format of the files you need.
+
+TVersion - This is a script which is using "connected devices report" to check whether
+we have any site with inconsistent terminals version. If at least one terminal has
+different version thatn rest of the terminal on the site it will be detected and
+returned to you in text box. "connected devices report" include many terminals which
+did not downloaded version (init wasn't done) this terminal will not be considered
+during a check
+
+POSDMvsADB - This script is doing comparison of Dashboard and POSDM reports to find
+differences in transactions.
